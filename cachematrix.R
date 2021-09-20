@@ -1,15 +1,35 @@
-## Put comments here that give an overall description of what your
-## functions do
+## makeCacheMatrix is a function consisting of set, get, setInv, and getInv.
+## library(MASS) allows for the solving of non-square matrices.
 
-## Write a short comment describing this function
-
+library(MASS)
 makeCacheMatrix <- function(x = matrix()) {
-
+  inv <- NULL
+  set <- function(y){
+    x <<- y
+    inv <<- NULL
+  }
+  get <- function() {x}
+  setInv <- function(inverse) {inv <<- inverse}
+  getInv <- function(){
+    inver <- ginv(x)
+    inver%*%x
+  }
+  list(set = set, get = get, setInv = setInv, getInv = getInv)
 }
 
-
-## Write a short comment describing this function
+## cacheSolve first checks if inverse has already been calculated
+## so it can retrieve it from cache and skip the computation.
+## If not already calculated, it calculates the inverse
+## and returns it.
 
 cacheSolve <- function(x, ...) {
-        ## Return a matrix that is the inverse of 'x'
+  inv <- x$getInv()
+  if(!is.null(inv)){
+    message("Gettin' dat ca$h money oops I mean cached matrix!")
+    return(inv)
+  }
+  data <- x$get()
+  inv <- solve(data, ...)
+  x$setInv(inv)
+  inv
 }
